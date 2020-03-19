@@ -8,5 +8,5 @@ This is a simple code which allows users to analyse COVID-19 data based on the J
 3. Clone this project to your local machine.
 4. In ```countryAnalytics.py``` file, set path to CSSE dataset (see comments in the file)
 5. Example codes are provided at the end of the Class definition in ```countryAnalytics.py``` file.
-6. Don't forget to update the dataset, by pulling updates every day!
+6. Don't forget to update the dataset by pulling updates every day!
 
