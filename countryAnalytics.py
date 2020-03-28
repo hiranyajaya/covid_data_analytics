@@ -67,9 +67,9 @@ class CountryAnalytics:
         """ returns total number of confirmed cases, deaths and recoveries as of today """
         return [self._confirmed_count[-1],self._death_count[-1],self._recovered_count[-1]]
     
-    def get_growth_rate(self):
+    def get_growth_rate_timeseries(self):
         """ returns the average growth rate for a given country """
-        data = self._confirmed_count[4:]
+        data = self._confirmed_count
         val = []
         
         for i in range(1,len(data)):
@@ -78,7 +78,24 @@ class CountryAnalytics:
             else:
                 val.append(1)
 
-        return np.mean(val)
+        return val
+    
+    def get_growth_factor_timeseries(self):
+        """ returns the average growth rate for a given country """
+        data = self._confirmed_count
+        val = []
+        
+        for i in range(2,len(data)):
+            if ((data[i-1]-data[i-2])>0 and (data[i]-data[i-1]) > 0):
+                val.append((data[i]-data[i-1])/(data[i-1]-data[i-2]))
+            else:
+                val.append(1)
+
+        return val
+    
+    def get_avg_growth_rate(self):
+        return np.mean(self.get_growth_rate_timeseries())
+        
     
     def predict(self,rate,days):
         """ predict the expected number of cases in x days. x is the input """
@@ -89,9 +106,10 @@ class CountryAnalytics:
     
 if __name__ == '__main__':
     
-    country_list = ['Sri Lanka', 'US', 'Australia','New Zealand'] #list the countries 
+    country_list = ['US', 'Italy','China','Sri Lanka'] #list the countries 
     countries = [] #holds object list
     data = [] #holds timeseries data for each object
+    growth_factor = [] #holds timeseries for growth rate
     
     # create objects for each country
     for idx,val in enumerate(country_list):
@@ -100,33 +118,38 @@ if __name__ == '__main__':
     # retrieved data for each country
     for idx,val in enumerate(countries):
         data.append(val.get_confirmed_timeseries())
+        growth_factor.append(val.get_growth_factor_timeseries())
+        
+
         
         
     #example 1: get virus growth rate for xth country in the list.
-    rate = countries[2].get_growth_rate()
+    rate = countries[2].get_avg_growth_rate()
     
     #example 2: Predict the expected number of cases in x days for the yth country.
-    prediction = countries[3].predict(rate,25)
+    prediction = countries[2].predict(rate,23)
       
     """plot data"""
     
     #example 3: plot data for a single country
     """ for a single country """
-    c_id = 2
-    dates = range(0,len(data[c_id]))
-    country_lbl, = plt.plot(dates, data[c_id], label= str(countries[c_id].get_country_name()),color='orange')
-    plt.xlabel('days since 22 Jan 2020',size=16)
-    plt.ylabel('confirmed cases',size=16)
-    plt.title('Confirmed cases for {} as of {}'.format(countries[c_id].get_country_name(),datetime.datetime.today()))
-    plt.grid(color='black', linestyle='--', linewidth=0.5)
-    plt.legend(handles=[country_lbl],prop={'size': 12})
-    plt.show()
+    # c_id = 0
+    # dates = range(0,len(data[c_id]))
+    # country_lbl, = plt.plot(dates, data[c_id], label= str(countries[c_id].get_country_name()),color='orange')
+    # plt.xlabel('days since 22 Jan 2020',size=16)
+    # plt.ylabel('confirmed cases',size=16)
+    # plt.title('Confirmed cases for {} as of {}'.format(countries[c_id].get_country_name(),datetime.datetime.today()-datetime.timedelta(days=1)))
+    # plt.grid(color='black', linestyle='--', linewidth=0.5)
+    # plt.legend(handles=[country_lbl],prop={'size': 12})
+    # plt.show()
     
     #example 4: plot data for multiple countries
     """for multiple countries """
+    # dates = range(0,len(data[0]))
     # c0, = plt.plot(dates, data[0], label= str(countries[0].get_country_name()), color='b')
     # c1, = plt.plot(dates, data[1], label= str(countries[1].get_country_name()), color='r')
     # c2, = plt.plot(dates, data[2], label= str(countries[2].get_country_name()), color='g')
+    # #c3, = plt.plot(dates, data[3], label= str(countries[3].get_country_name()), color='orange')
     # plt.xlabel('days since 22 Jan 2020',size=16)
     # plt.ylabel('confirmed cases',size=16)
     # plt.title('Confirmed COVID-19 cases as of {}'.format(datetime.date.today()),size=16)
@@ -134,5 +157,15 @@ if __name__ == '__main__':
     # plt.legend(handles=[c0,c1,c2],prop={'size': 12})
     # plt.show()
     
+    #example 5: get day by day growth rates for a given country
+    
     #Feel free to try out different operations by calling other methods 
-
+    c_id = 3
+    dates = range(0,len(growth_factor[c_id]))
+    country_lbl, = plt.plot(dates, growth_factor[c_id], label= str(countries[c_id].get_country_name()),color='b')
+    plt.xlabel('days since 22 Jan 2020',size=16)
+    plt.ylabel('growth rate',size=16)
+    plt.title('COVID-19 growth factor for {} as of {}'.format(countries[c_id].get_country_name(),datetime.datetime.today()-datetime.timedelta(days=1)))
+    plt.grid(color='black', linestyle='--', linewidth=0.5)
+    plt.legend(handles=[country_lbl],prop={'size': 12})
+    plt.show()
