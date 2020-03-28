@@ -10,3 +10,10 @@ This is a simple code which allows users to analyse COVID-19 data based on the J
 5. Example codes are provided at the end of the Class definition in ```countryAnalytics.py``` file.
 6. Don't forget to update the dataset by pulling updates every day!
 
+## Contact ##
+
+email: hiranyajayakody@gmail.com
+
+## Terms of Use ##
+
+Strictly for non-commercial use only.
